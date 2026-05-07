@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "../api";
 
-const PostForm = () => {
+const PostForm = ({ onPostCreated }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,8 @@ const PostForm = () => {
     setLoading(true);
     try {
       const newPost = { title: title.trim(), content: content.trim() };
-      const res = await axios.post("http://localhost:5000/api/posts", newPost);
+      const res = await axios.post(API_URL, newPost);
+      onPostCreated?.(res.data.data);
       setSuccess("Post created successfully");
       setTitle("");
       setContent("");
