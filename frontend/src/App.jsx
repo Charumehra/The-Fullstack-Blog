@@ -96,6 +96,15 @@ function App() {
             <div className="post-grid">
               {posts.map((post) => (
                 <article className="post-item" key={post._id}>
+                  {(post.imageDataUrl || post.imageUrl) && (
+                    <div className="post-thumb-wrap">
+                      <img
+                        className="post-thumb"
+                        src={post.imageDataUrl || post.imageUrl}
+                        alt={post.title}
+                      />
+                    </div>
+                  )}
                   <div className="post-item-head">
                     <h3>{post.title}</h3>
                     <button

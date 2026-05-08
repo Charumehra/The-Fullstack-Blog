@@ -1,13 +1,51 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../api";
 
 const PostForm = ({ onPostCreated }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview("");
+    }
+
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+    setImageFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview("");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,12 +58,17 @@ const PostForm = ({ onPostCreated }) => {
 
     setLoading(true);
     try {
-      const newPost = { title: title.trim(), content: content.trim() };
-      const res = await axios.post(API_URL, newPost);
+      const formData = new FormData();
+      formData.append("title", title.trim());
+      formData.append("content", content.trim());
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      const res = await axios.post(API_URL, formData);
       onPostCreated?.(res.data.data);
       setSuccess("Post created successfully");
-      setTitle("");
-      setContent("");
+      resetForm();
       setTimeout(() => setSuccess(""), 3000);
       console.log(res.data);
     } catch (err) {
@@ -42,6 +85,23 @@ const PostForm = ({ onPostCreated }) => {
         <h2 className="card-title">Create Blog Post</h2>
 
         <form onSubmit={handleSubmit} className="form">
+          <label className="field">
+            <span className="label">Thumbnail image</span>
+            <input
+              ref={fileInputRef}
+              className="input file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </label>
+
+          {imagePreview && (
+            <div className="image-preview-wrap">
+              <img className="image-preview" src={imagePreview} alt="Selected thumbnail preview" />
+            </div>
+          )}
+
           <label className="field">
             <span className="label">Title</span>
             <input

@@ -1,14 +1,14 @@
 # Week 11 Blog App
 
-A small full-stack blog app with a React frontend and a Node.js + Express + MongoDB backend.
+A full-stack blog app with a React frontend, an Express backend, MongoDB persistence, and ImageKit-powered image thumbnails.
 
 ## Features
 
-- Create blog posts
-- Fetch posts from MongoDB
-- Delete posts from the UI and database
-- Loading and error states for offline backend scenarios
-- Responsive modern purple UI
+- Create, fetch, and delete blog posts
+- Upload an optional image thumbnail with each post
+- Store image URLs in MongoDB and the actual image in ImageKit
+- Show loading and error states in the UI
+- Modern purple dashboard layout
 
 ## Project Structure
 
@@ -20,21 +20,22 @@ week11/
 │   └── src/
 │       ├── config/
 │       ├── controllers/
+│       ├── middleware/
 │       ├── models/
 │       └── routes/
 └── frontend/
-	├── src/
-	│   ├── App.jsx
-	│   ├── api.js
-	│   ├── components/
-	│   └── index.css
-	└── package.json
-
+    ├── src/
+    │   ├── App.jsx
+    │   ├── api.js
+    │   ├── components/
+    │   └── index.css
+    └── package.json
 ```
+
 
 ## Notes
 
 - CORS is enabled in the backend.
 - The frontend fetches real data from MongoDB through the Express API.
-- Delete requests remove the post from both the server and the UI.
+- Image uploads are handled by Multer and stored in ImageKit, not MongoDB.
 
